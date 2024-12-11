@@ -165,7 +165,7 @@ GSYMS
 
 *.wav
 
-egs/
+egs/*
 docker/
 egs/aishell2/
 egs/ami/
@@ -175,10 +175,15 @@ egs/babel/s5d/
 cmake/
 egs/ami/*
 tools/
-# !/egs/chiangyihan/s5
+!/egs/chiangyihan/
+/egs/chiangyihan/data/
+egs/chiangyihan/s5/data/
+egs/chiangyihan/s5/exp_learning/
+
 
 # *.conf
 # src/
 # windows/
 # scripts/
 # misc/
+
