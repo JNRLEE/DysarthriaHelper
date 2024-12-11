@@ -59,6 +59,8 @@ GSYMS
 *.pdb
 *.exp
 *.manifest
+*.png
+*.pdf
 
 # # /src/
 # /src/.short_version
@@ -179,6 +181,6 @@ egs/
 *.conf
 src/
 src/
-windows/
-scripts/
-misc/
+# windows/
+# scripts/
+# misc/
