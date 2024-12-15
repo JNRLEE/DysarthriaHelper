@@ -1,6 +1,8 @@
 #!/bin/bash
 set -x
-set +e
+set -e
+export PS4='+[${BASH_SOURCE}:${LINENO}] '
+
 . ./path.sh
 . ./cmd.sh
 # Copyright 
