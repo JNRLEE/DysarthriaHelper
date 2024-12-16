@@ -92,3 +92,5 @@ tools/srilm/*
 
 
 
+tools/irstlm
+tools/kaldi_lm
