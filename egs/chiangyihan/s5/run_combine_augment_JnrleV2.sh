@@ -23,13 +23,13 @@ Step10_TDNN_Pre=1
 Step11_TDNN_train=1
 Step12_Decoding=1
 
-model_name=Wang_real_addnoise_LDV_caffeteria_n65_LDV_s60  
+
 #路徑cd到S5
 mfcc_conf_path=/work/jerryfat/kaldi-trunk/egs/chiangyihan/s5/data/LDV_VITS_asr/conf_forfun/mfcc_hires.conf
 s5_root=$(pwd)
-data=$(pwd)/data/TrainingData/${model_name}/final #change
-data_root=$(pwd)/data/TrainingData/${model_name} 
-               #change
+data=$(pwd)/data/Wang_real_addnoise_LDV_caffeteria_n55_LDV_s40/final  #change
+data_root=$(pwd)/data/Wang_real_addnoise_LDV_caffeteria_n55_LDV_s40
+model_name=Wang_real_addnoise_LDV_caffeteria_n55_LDV_s40               #change
 nj=2 #CPU 線程
 passward=qwertyuiop #使用者密碼
 
@@ -213,7 +213,7 @@ fi
 
 if [ $Step9_Subset_final_Pre -eq 1 ]; then
 ##製作Subset for inside test
-utils/subset_data_dir.sh $data/nopitch 250 $data/nopitch_inside || exit 1
+utils/subset_data_dir.sh $data/nopitch 50 $data/nopitch_inside || exit 1
 steps/online/nnet2/extract_ivectors_online.sh --cmd run.pl --nj $nj $data/nopitch_inside exp_learning/$model_name/nnet3/extractor $data/nopitch_inside/ivectors || exit 1
 fi
 
