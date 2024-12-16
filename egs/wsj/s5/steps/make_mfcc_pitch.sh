@@ -8,7 +8,7 @@
 # Note: This file is based on make_mfcc.sh and make_pitch_kaldi.sh
 
 # Begin configuration section.
-nj=1
+nj=4
 cmd=run.pl
 mfcc_config=conf/mfcc.conf
 pitch_config=conf/pitch.conf

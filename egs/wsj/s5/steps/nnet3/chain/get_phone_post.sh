@@ -95,7 +95,7 @@ else
 fi
 
 if $use_gpu; then
-  gpu_queue_opt="--gpu 1"
+  gpu_queue_opts="--gpu 1"
   gpu_opt="--use-gpu=yes"
   if ! cuda-compiled; then
     echo "$0: WARNING: you are running with one thread but you have not compiled"
@@ -222,9 +222,6 @@ if [ $stage -le 2 ]; then
     model="nnet3-copy '--edits-config=echo remove-output-nodes name=output; echo rename-node old-name=output-xent new-name=output|' $model_dir/final.mdl -|"
 
     $cmd $gpu_queue_opts JOB=1:$nj $dir/log/get_phone_post.JOB.log \
-       nnet3-compute $gpu_opt $ivector_opts \
-       --frame-subsampling-factor=$frame_subsampling_factor --apply-exp=false \
-       "$model" "$feats" ark:/work/jerryfat/kaldi-trunk/egs/formosa_train/s5/exp_learning/chain/senone_TTS_320/test_exp_false.ark \| \
        nnet3-compute $gpu_opt $ivector_opts \
        --frame-subsampling-factor=$frame_subsampling_factor --apply-exp=true \
        "$model" "$feats" ark:- \| \

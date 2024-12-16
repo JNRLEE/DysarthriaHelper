@@ -166,7 +166,6 @@ def train_new_models(dir, iter, srand, num_jobs,
             require_zero_status=True)
 
         threads.append(thread)
-	time.sleep(20)
 
     for thread in threads:
         thread.join()

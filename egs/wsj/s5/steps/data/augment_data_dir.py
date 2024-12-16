@@ -95,14 +95,7 @@ def get_noise_list(noise_wav_scp_filename):
     noise_wavs = {}
     noise_utts = []
     for line in noise_wav_scp_file:
-        # toks=line.split(" ")
-        #### Bug fixes: Corrected the error that caused a key error when using tabs for indentation.####    
-        if len(line.split(" ")) == 2:
-            toks=line.split(" ")
-        else:
-            toks=line.split("\t")
-        assert len(toks)==2
-        #### Bug fixes: Corrected the error that caused a key error when using tabs for indentation.####    
+        toks=line.split(" ")
         wav = " ".join(toks[1:])
         noise_utts.append(toks[0])
         noise_wavs[toks[0]] = wav.rstrip()
@@ -243,14 +236,7 @@ def main():
 
     # Augment each line in the wav file
     for line in wav_scp_file:
-        # toks = line.rstrip().split(" ")
-        #### Bug fixes: Corrected the error that caused a key error when using tabs for indentation.####        
-        if len(line.rstrip().split(" "))==2:
-            toks = line.rstrip().split(" ")
-        else:
-            toks = line.rstrip().split("\t")
-        assert len(toks)==2
-        #### Bug fixes: Corrected the error that caused a key error when using tabs for indentation.####     
+        toks = line.rstrip().split(" ")
         utt = toks[0]
         wav = " ".join(toks[1:])
         dur = reco2dur[utt]
