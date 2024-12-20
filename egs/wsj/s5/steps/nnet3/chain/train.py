@@ -3,7 +3,13 @@
 # Copyright 2016    Vijayaditya Peddinti.
 #           2016    Vimal Manohar
 # Apache 2.0.
+# import logging
 
+# logging.basicConfig(
+#     level=logging.DEBUG,
+#     format='%(filename)s:%(lineno)d %(levelname)s: %(message)s',
+#     stream=sys.stdout
+# )
 """ This script is based on steps/nnet3/chain/train.sh
 """
 from __future__ import division

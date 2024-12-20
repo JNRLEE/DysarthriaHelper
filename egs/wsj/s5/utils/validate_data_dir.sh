@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+#!/bin/bash
+# set -x
+# set -e
+# export PS4='+[${BASH_SOURCE}:${LINENO}] '
 
 cmd="$@"
 

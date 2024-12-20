@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-
+set -x
+set -e
+export PS4='+[${BASH_SOURCE}:${LINENO}] '
 # Copyright 2014  Johns Hopkins University (Author: Daniel Povey)
 # Apache 2.0
 

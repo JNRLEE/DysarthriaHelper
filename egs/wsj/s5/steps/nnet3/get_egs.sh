@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-
+set -x
+set -e
+export PS4='+[${BASH_SOURCE}:${LINENO}] '
 # Copyright 2012-2016 Johns Hopkins University (Author: Daniel Povey).  Apache 2.0.
 #
 # This script, which will generally be called from other neural-net training

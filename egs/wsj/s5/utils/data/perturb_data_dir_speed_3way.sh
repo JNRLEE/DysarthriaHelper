@@ -1,4 +1,7 @@
-#!/usr/bin/env bash
+#!/bin/bash
+set -x
+set -e
+export PS4='+[${BASH_SOURCE}:${LINENO}] '
 
 # Copyright 2016-2018  Johns Hopkins University (author: Daniel Povey)
 #                2018  Hossein Hadian
@@ -61,6 +64,29 @@ echo "... in ${srcdir}, because obtaining it after speed-perturbing"
 echo "... would be very slow, and you might need them."
 utils/data/get_utt2dur.sh ${srcdir}
 utils/data/get_reco2dur.sh ${srcdir}
+# # utils/data/perturb_data_dir_speed.sh --include-spk-prefix $include_spk_prefix 0.9 ${srcdir} ${destdir}_speed0.9 
+# utils/data/perturb_data_dir_speed.sh --include-spk-prefix $include_spk_prefix 0.9 ${srcdir} ${destdir}_speed0.9 || exit 1
+# utils/data/perturb_data_dir_speed.sh --include-spk-prefix $include_spk_prefix 1.1 ${srcdir} ${destdir}_speed1.1 || exit 1
+
+# # Remove frame_shift files before combining
+# rm -f ${destdir}_speed0.9/frame_shift ${destdir}_speed1.1/frame_shift 2>/dev/null
+
+# if $always_include_prefix; then
+#   utils/copy_data_dir.sh --spk-prefix sp1.0- --utt-prefix sp1.0- ${srcdir} ${destdir}_speed1.0
+#   if [ ! -f $srcdir/utt2uniq ]; then
+#     cat $srcdir/utt2spk | awk  '{printf("sp1.0-%s %s\n", $1, $1);}' > ${destdir}_speed1.0/utt2uniq
+#   else
+#     cat $srcdir/utt2uniq | awk '{printf("sp1.0-%s %s\n", $1, $2);}' > ${destdir}_speed1.0/utt2uniq
+#   fi
+#   rm -f ${destdir}_speed1.0/frame_shift 2>/dev/null
+#   utils/data/combine_data.sh $destdir ${destdir}_speed1.0 ${destdir}_speed0.9 ${destdir}_speed1.1 || exit 1
+
+#   rm -r ${destdir}_speed0.9 ${destdir}_speed1.1 ${destdir}_speed1.0
+# else
+#   rm -f ${srcdir}/frame_shift 2>/dev/null
+#   utils/data/combine_data.sh $destdir ${srcdir} ${destdir}_speed0.9 ${destdir}_speed1.1 || exit 1 
+#   rm -r ${destdir}_speed0.9 ${destdir}_speed1.1
+# fi
 
 utils/data/perturb_data_dir_speed.sh --include-spk-prefix $include_spk_prefix 0.9 ${srcdir} ${destdir}_speed0.9 || exit 1
 utils/data/perturb_data_dir_speed.sh --include-spk-prefix $include_spk_prefix 1.1 ${srcdir} ${destdir}_speed1.1 || exit 1
@@ -73,11 +99,18 @@ if $always_include_prefix; then
     cat $srcdir/utt2uniq | awk '{printf("sp1.0-%s %s\n", $1, $2);}' > ${destdir}_speed1.0/utt2uniq
   fi
   utils/data/combine_data.sh $destdir ${destdir}_speed1.0 ${destdir}_speed0.9 ${destdir}_speed1.1 || exit 1
+   
 
   rm -r ${destdir}_speed0.9 ${destdir}_speed1.1 ${destdir}_speed1.0
 else
+   
   utils/data/combine_data.sh $destdir ${srcdir} ${destdir}_speed0.9 ${destdir}_speed1.1 || exit 1
+   
+
   rm -r ${destdir}_speed0.9 ${destdir}_speed1.1
+   
+  
+
 fi
 
 echo "$0: generated 3-way speed-perturbed version of data in $srcdir, in $destdir"

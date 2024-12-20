@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-
+set -x
+set -e
+export PS4='+[${BASH_SOURCE}:${LINENO}] '
 # Copyright   2013  Daniel Povey
 # Apache 2.0.
 
@@ -158,8 +160,9 @@ fi
 x=0
 while [ $x -lt $num_iters ]; do
   if [ $stage -le $x ]; then
+    if [ -f $dir/final.ie ]; then
     rm $dir/.error 2>/dev/null
-
+    fi
     Args=() # bash array of training commands for 1:nj, that put accs to stdout.
     for j in $(seq $nj_full); do
       Args[$j]=`echo "ivector-extractor-acc-stats --num-threads=$num_threads $dir/$x.ie '$feats' 'ark,s,cs:gunzip -c $dir/post.JOB.gz|' -|" | sed s/JOB/$j/g`
@@ -203,7 +206,9 @@ if $cleanup; then
   rm $dir/post.*.gz
 fi
 
-rm $dir/final.ie 2>/dev/null
+if [ -f $dir/final.ie ]; then
+    rm $dir/final.ie
+fi
 ln -s $x.ie $dir/final.ie
 
 # assign a unique id to this extractor

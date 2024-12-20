@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-
+set -x
+set -e
+export PS4='+[${BASH_SOURCE}:${LINENO}] '
 
 # begin configuration section
 
@@ -85,6 +87,12 @@ for pair in $pairs; do
   steps/compute_cmvn_stats.sh $feature_data $this_dir $featdir
 done
 
+# # Remove frame_shift files before combining
+# for pair in $pairs; do
+#   rm -f $feature_data/frame_shift 2>/dev/null
+# done
+
+
 utils/combine_data.sh $data $all_feature_dirs
 
 
@@ -100,5 +108,5 @@ if $cleanup; then
   echo "$0: Cleaning up temporary directories for ${feature_type} features."
   # Note, this just removes the .scp files and so on, not the data which is located in
   # $featdir and which is still needed.
-  rm -r $all_feature_dirs
+  # rm -r $all_feature_dirs
 fi

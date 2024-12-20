@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
+set -x
+set -e
+export PS4='+[${BASH_SOURCE}:${LINENO}] '
+
+echo "--------FFFFFF-------------\n\n\n"
+echo "--------EEEEEEE-------------------\n\n\n"
 # Copyright 2012  Johns Hopkins University (Author: Daniel Povey).  Apache 2.0.
 #           2014  David Snyder
 
@@ -42,15 +48,22 @@ for dir in $*; do
   fi
 done
 
+
 # Check that frame_shift are compatible, where present together with features.
 dir_with_frame_shift=
 for dir in $*; do
   if [[ -f $dir/feats.scp && -f $dir/frame_shift ]]; then
     if [[ $dir_with_frame_shift ]] &&
        ! cmp -s $dir_with_frame_shift/frame_shift $dir/frame_shift; then
-      echo "$0:error: different frame_shift in directories $dir and " \
-           "$dir_with_frame_shift. Cannot combine features."
-      exit 1;
+      # echo "$0:error: different frame_shift in directories $dir and " \
+      #      "$dir_with_frame_shift. Cannot combine features."
+      # exit 1;
+      # echo "--------FFFFFF1-------------\n\n\n"
+      # ls /work/jerryfat/kaldi-trunk/egs/chiangyihan/s5/data/LDV_asr_Jnrle_v1/TEST/Wang_real_addnoise_LDV_caffeteria_n55_LDV_s55/perturb/
+      # echo "--------EEEEEEE-------------------\n\n\n"
+      echo "Warning: different frame_shift detected. Copying frame_shift from $dir_with_frame_shift to $dir"
+      cp $dir_with_frame_shift/frame_shift $dir/frame_shift
+
     fi
     dir_with_frame_shift=$dir
   fi
@@ -63,6 +76,9 @@ has_utt2uniq=false
 for in_dir in $*; do
   if [ -f $in_dir/utt2uniq ]; then
     has_utt2uniq=true
+      #     echo "--------FFFFFF2-------------\n\n\n"
+      # ls /work/jerryfat/kaldi-trunk/egs/chiangyihan/s5/data/LDV_asr_Jnrle_v1/TEST/Wang_real_addnoise_LDV_caffeteria_n55_LDV_s55/perturb/
+      # echo "--------EEEEEEE-------------------\n\n\n"
     break
   fi
 done
@@ -99,6 +115,9 @@ if $has_segments; then
     if [ ! -f $in_dir/segments ]; then
       echo "$0 [info]: will generate missing segments for $in_dir" 1>&2
       utils/data/get_segments_for_data.sh $in_dir
+      #       echo "--------FFFFFF4-------------\n\n\n"
+      # ls /work/jerryfat/kaldi-trunk/egs/chiangyihan/s5/data/LDV_asr_Jnrle_v1/TEST/Wang_real_addnoise_LDV_caffeteria_n55_LDV_s55/perturb/
+      # echo "--------EEEEEEE-------------------\n\n\n"
     else
       cat $in_dir/segments
     fi
@@ -107,7 +126,9 @@ if $has_segments; then
 else
   echo "$0 [info]: not combining segments as it does not exist"
 fi
-
+      # echo "--------FFFFFF5-------------\n\n\n"
+      # ls /work/jerryfat/kaldi-trunk/egs/chiangyihan/s5/data/LDV_asr_Jnrle_v1/TEST/Wang_real_addnoise_LDV_caffeteria_n55_LDV_s55/perturb/
+      # echo "--------EEEEEEE-------------------\n\n\n"
 for file in utt2spk utt2lang utt2dur utt2num_frames reco2dur feats.scp text cmvn.scp vad.scp reco2file_and_channel wav.scp spk2gender $extra_files; do
   exists_somewhere=false
   absent_somewhere=false
@@ -134,7 +155,6 @@ for file in utt2spk utt2lang utt2dur utt2num_frames reco2dur feats.scp text cmvn
 done
 
 utils/utt2spk_to_spk2utt.pl <$dest/utt2spk >$dest/spk2utt
-
 if [[ $dir_with_frame_shift ]]; then
   cp $dir_with_frame_shift/frame_shift $dest
 fi

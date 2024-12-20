@@ -1,9 +1,7 @@
 #!/bin/bash
 set -x
-set +e
-. ./path.sh
-. ./cmd.sh
-# Copyright 
+set -e
+export PS4='+[${BASH_SOURCE}:${LINENO}] '
 # Apache 2.0
 #檢查kaldi所需的東西
 #cd kaldi/tools
@@ -12,28 +10,28 @@ set +e
 # Caution: some of the graph creation steps use quite a bit of memory, so you
 # should run this on a machine that has sufficient memory.
 
-Step1_Data_Aug=1
-Step2_LM_Pre=1
-Step3_Lexicon_Pre=1
-Step4_Subset_Aug_Pre=1
-Step5_MFCC_Extract=1
-Step6_Mono_train=1
-Step7_Triphone_train=1
-Step8_I_vector_Extract=1
-Step9_Subset_final_Pre=1
-Step10_TDNN_Pre=1
+Step1_Data_Aug=0
+Step2_LM_Pre=0
+Step3_Lexicon_Pre=0
+Step4_Subset_Aug_Pre=0
+Step5_MFCC_Extract=0
+Step6_Mono_train=0
+Step7_Triphone_train=0
+Step8_I_vector_Extract=0
+Step9_Subset_final_Pre=0
+Step10_TDNN_Pre=0
 Step11_TDNN_train=1
 Step12_Decoding=1
 
-model_name=Wang_real_addnoise_LDV_caffeteria_n75_LDV_s40
+
 #路徑cd到S5
 mfcc_conf_path=/work/jerryfat/kaldi-trunk/egs/chiangyihan/s5/data/LDV_VITS_asr/conf_forfun/mfcc_hires.conf
 s5_root=$(pwd)
-data=$(pwd)/data/TrainingData/${model_name}/final #change
-data_root=$(pwd)/data/TrainingData/${model_name} 
-nj=2 #CPU 線程
+model_name=Wang_real_addnoise_LDV_caffeteria_n55_LDV_s45
+data=$(pwd)/data/LDV_asr_Jnrle_v1/TEST/${model_name}/final #change
+data_root=$(pwd)/data/LDV_asr_Jnrle_v1/TEST/${model_name} 
+nj=1 #CPU 線程
 passward=qwertyuiop #使用者密碼
-
 
 #獲取當前路徑存到data
 echo "當前路徑為$data"
@@ -55,23 +53,20 @@ utils/data/perturb_data_dir_speed_3way.sh $data_root/raw $data_root/speed
 steps/nnet2/get_perturbed_feats.sh --feature-type mfcc conf/mfcc_hires.conf $data_root/perturb/mfcc $data_root/perturb/mfcc_perturb $data_root/speed $data_root/perturb/mfcc_dataset
 # steps/nnet2/get_perturbed_feats.sh --feature-type mfcc $mfcc_conf_path $data_root/perturb/mfcc $data_root/perturb/mfcc_perturb $data_root/speed $data_root/perturb/mfcc_dataset
 
-echo -e "#####removeing_frame_shift#####"
-rm $data_root/perturb/mfcc_dataset-0.9-0.9/frame_shift
-rm $data_root/perturb/mfcc_dataset-0.95-1.1/frame_shift
-rm $data_root/perturb/mfcc_dataset-1.0-0.8/frame_shift
-rm $data_root/perturb/mfcc_dataset-1.05-1.2/frame_shift
-rm $data_root/perturb/mfcc_dataset-1.1-1.0/frame_shift
-echo -e "#####removeing_frame_shift_end#####"
-
-
-
-#combine mfcc augmentaion
+ls $data_root/perturb/mfcc_dataset-0.9-0.9
+# rm $data_root/perturb/mfcc_dataset-0.9-0.9/frame_shift
+# rm $data_root/perturb/mfcc_dataset-0.95-1.1/frame_shift
+# rm $data_root/perturb/mfcc_dataset-1.0-0.8/frame_shift
+# rm $data_root/perturb/mfcc_dataset-1.05-1.2/frame_shift
+# rm $data_root/perturb/mfcc_dataset-1.1-1.0/frame_shift
+	
+# combine mfcc augmentaion
 utils/data/combine_data.sh $data_root/perturb/mfcc_dataset $data_root/perturb/mfcc_dataset-0.9-0.9 $data_root/perturb/mfcc_dataset-0.95-1.1 $data_root/perturb/mfcc_dataset-1.0-0.8 $data_root/perturb/mfcc_dataset-1.05-1.2 $data_root/perturb/mfcc_dataset-1.1-1.0
 
-#combine all 
+# combine all 
 utils/data/combine_data.sh $data $data_root/perturb/mfcc_dataset $data_root/raw $data_root/speed
 echo -e "#####End Augmentatiom preparation#####"
-#augmentatiom end ###################################
+# augmentatiom end ###################################
 fi
 
 if [ $Step2_LM_Pre -eq 1 ]; then
@@ -88,6 +83,7 @@ cd $data/local/lm_learning
 ngram-count -order 3 -write-vocab vocab-full.txt -wbdiscount -text text_raw -lm lm.gz || exit 1
 gunzip -q -f lm.gz || exit 1
 ngram-count -order 3 -write-vocab vocab-full.txt -wbdiscount -text text_raw -lm lm.gz
+echo "當前路徑為$(pwd)"
 echo -e "#####End LM preparation#####"
 #LM preparation end ####################################
 fi
@@ -99,13 +95,12 @@ echo "當前路徑為$(pwd)"
 cd ../ #cd local
 mkdir -p dict_learning
 cp $data_root/lexicon.txt dict_learning/lexicon.txt || exit 1
-dos2unix dict_learning/lexicon.txt || exit 1 #change
+dos2unix /work/jerryfat/kaldi-trunk/egs/chiangyihan/s5/data/cva_asr/data/test/local/dict_learning/lexicon.txt || exit 1 #change
 cd dict_learning
 echo SIL > silence_phones.txt || exit 1
 echo SIL > optional_silence.txt || exit 1
 grep -v -w sil lexicon.txt | awk '{for(n=2;n<=NF;n++) { p[$n]=1; }} END{for(x in p) {print x}}' | sort > nonsilence_phones.txt || exit 1 
-echo "當前路徑為$(pwd)"
-dos2unix nonsilence_phones.txt || exit 1  #change
+dos2unix /work/jerryfat/kaldi-trunk/egs/chiangyihan/s5/data/cva_asr/data/test/local/dict_learning/nonsilence_phones.txt || exit 1  #change
 echo -e "<unk>\tSIL" >> lexicon.txt  || exit 1
 cd $s5_root #cd S5
 
@@ -120,7 +115,7 @@ fi
 if [ $Step4_Subset_Aug_Pre -eq 1 ]; then
 # 製作增量後Subset for inside test #1000
 # utils/subset_data_dir.sh $data_root/raw 1000 $data/inside_test || exit 1 
-utils/subset_data_dir.sh $data_root/raw 50 $data/inside_test || exit 1 
+utils/subset_data_dir.sh $data_root/raw 100 $data/inside_test || exit 1 
 
 dos2unix $data/text || exit 1               #change
 dos2unix $data/inside_test/text || exit 1    #change
@@ -212,14 +207,21 @@ steps/online/nnet2/get_pca_transform.sh --cmd run.pl --splice-opts "--left-conte
 ##Training the diagonal UBM. Use 512 Gaussians in the UBM.
 steps/online/nnet2/train_diag_ubm.sh --cmd run.pl --nj $nj --num-frames 700000 --num-threads 16 $data/nopitch 128 exp_learning/$model_name/nnet3/pca_transform exp_learning/$model_name/nnet3/diag_ubm|| exit 1 #若資料量大128可以調成512
 ##Training the iVector extractor"
-steps/online/nnet2/train_ivector_extractor.sh --cmd run.pl --nj $nj --num-processes 1 $data/nopitch exp_learning/$model_name/nnet3/diag_ubm exp_learning/$model_name/nnet3/extractor|| exit 1
+steps/online/nnet2/train_ivector_extractor.sh \
+    --cmd run.pl \
+    --nj $nj \
+    --num-processes 1 \
+    $data/nopitch \
+    exp_learning/$model_name/nnet3/diag_ubm \
+    exp_learning/$model_name/nnet3/extractor \
+    2>&1 | tee train_ivector.log || { echo "ivector extractor training failed"; exit 1; }
 ##Extracting iVectors for training
 steps/online/nnet2/extract_ivectors_online.sh --cmd run.pl --nj $nj $data/nopitch exp_learning/$model_name/nnet3/extractor $data/nopitch/ivectors || exit 1
 fi
 
 if [ $Step9_Subset_final_Pre -eq 1 ]; then
 ##製作Subset for inside test
-utils/subset_data_dir.sh $data/nopitch 150 $data/nopitch_inside || exit 1
+utils/subset_data_dir.sh $data/nopitch 100 $data/nopitch_inside || exit 1
 steps/online/nnet2/extract_ivectors_online.sh --cmd run.pl --nj $nj $data/nopitch_inside exp_learning/$model_name/nnet3/extractor $data/nopitch_inside/ivectors || exit 1
 fi
 
@@ -368,4 +370,3 @@ echo -e "#####Inside testing#####\n"
 # echo -e "#####Outside testing#####\n"
 
 fi
-

@@ -50,8 +50,8 @@ if [ $Step1_Data_Aug -eq 1 ]; then
 echo -e "#####Start Augmentatiom preparation#####"
 cd /work/jerryfat/kaldi-trunk/egs/chiangyihan/s5
 utils/data/perturb_data_dir_speed_3way.sh $data_root/raw $data_root/speed
-steps/nnet2/get_perturbed_feats.sh --feature-type mfcc conf/mfcc_hires.conf $data_root/perturb/mfcc $data_root/perturb/mfcc_perturb $data_root/speed $data_root/perturb/mfcc_dataset
-# steps/nnet2/get_perturbed_feats.sh --feature-type mfcc $mfcc_conf_path $data_root/perturb/mfcc $data_root/perturb/mfcc_perturb $data_root/speed $data_root/perturb/mfcc_dataset
+# steps/nnet2/get_perturbed_feats.sh --feature-type mfcc conf/mfcc_hires.conf $data_root/perturb/mfcc $data_root/perturb/mfcc_perturb $data_root/speed $data_root/perturb/mfcc_dataset
+steps/nnet2/get_perturbed_feats.sh --feature-type mfcc $mfcc_conf_path $data_root/perturb/mfcc $data_root/perturb/mfcc_perturb $data_root/speed $data_root/perturb/mfcc_dataset
 
 rm $data_root/perturb/mfcc_dataset-0.9-0.9/frame_shift
 rm $data_root/perturb/mfcc_dataset-0.95-1.1/frame_shift
